@@ -68,6 +68,7 @@ TELEGRAM_TOPIC_IDS = {
     'DiamondRing': 668,
     'TopHat': 674,
     'SleighBell': 672,
+    'NekoHelmet': 574,
 }
 
 # Set up logging
