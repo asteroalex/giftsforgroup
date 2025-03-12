@@ -8,8 +8,6 @@ from threading import Timer
 TELEGRAM_BOT_TOKEN = '8105401955:AAGR_snjSPicJBcL4WoHgAm2X7g7802Lbns'
 # Telegram chat ID
 TELEGRAM_CHAT_ID = -1002459101321  # Numeric ID for the chat
-# Authorized user ID
-AUTHORIZED_USER_ID = 1267171169
 
 # Telegram topic IDs
 TELEGRAM_TOPIC_IDS = {
@@ -124,45 +122,6 @@ def handle_message(data):
 @sio.on('*')
 def catch_all(event, data):
     Timer(0.5, handle_message, [data]).start()
-
-# Handle reload command
-@bot.message_handler(commands=['reload'])
-def reload(message):
-    if message.from_user.id == AUTHORIZED_USER_ID:
-        sio.disconnect()
-        sio.connect('https://gsocket.trump.tg')
-        bot.send_message(message.chat.id, "👤 *Сервер успешно перезапущен*", parse_mode='Markdown')
-    else:
-        bot.delete_message(message.chat.id, message.message_id)
-
-# Handle addnft command
-@bot.message_handler(commands=['addnft'])
-def add_nft(message):
-    if message.from_user.id == AUTHORIZED_USER_ID:
-        try:
-            _, model, topic_id = message.text.split()
-            TELEGRAM_TOPIC_IDS[model] = int(topic_id)
-            bot.send_message(message.chat.id, "✅ *Успешно добавлена новая модель для поиска NFT!*", parse_mode='Markdown')
-        except ValueError:
-            bot.send_message(message.chat.id, "❌ *Ошибка в формате команды. Используйте /addnft название_модели айди_топика*", parse_mode='Markdown')
-    else:
-        bot.delete_message(message.chat.id, message.message_id)
-
-# Handle deletenft command
-@bot.message_handler(commands=['deletenft'])
-def delete_nft(message):
-    if message.from_user.id == AUTHORIZED_USER_ID:
-        try:
-            _, model, topic_id = message.text.split()
-            if model in TELEGRAM_TOPIC_IDS and TELEGRAM_TOPIC_IDS[model] == int(topic_id):
-                del TELEGRAM_TOPIC_IDS[model]
-                bot.send_message(message.chat.id, "🗑️ *Уведомления данного NFT удалены!*", parse_mode='Markdown')
-            else:
-                bot.send_message(message.chat.id, "❌ *Модель или айди топика не найдены*", parse_mode='Markdown')
-        except ValueError:
-            bot.send_message(message.chat.id, "❌ *Ошибка в формате команды. Используйте /deletenft название_модели айди_топика*", parse_mode='Markdown')
-    else:
-        bot.delete_message(message.chat.id, message.message_id)
 
 # Connect to the Socket.IO server
 sio.connect('https://gsocket.trump.tg')
